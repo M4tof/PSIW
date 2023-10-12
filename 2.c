@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define MAX 1
 
 int main(int argc, char*argv[]){
-    char buf[MAX];
+    char buf;
     int desc_zrod;
     int lbajt;
 
@@ -21,11 +20,10 @@ int main(int argc, char*argv[]){
         exit(1);
     }
     
-    char X='X';
-    while((lbajt = read(desc_zrod,buf,MAX)) > 0){
-        if(buf[0]=='x'){
-            long roz =lseek(desc_zrod,-1,SEEK_CUR);
-            if (write(desc_zrod,&X,1)==-1){
+    while((lbajt = read(desc_zrod,&buf,1)) > 0){
+        if(buf=='x'){
+            lseek(desc_zrod,-1,SEEK_CUR);
+            if (write(desc_zrod,"X",1)==-1){
                 printf("Error");
                 exit(1);
             }
