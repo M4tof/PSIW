@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#define MAX 512
 
 
 int main(int argc, char*argv[]){
@@ -17,7 +18,7 @@ int main(int argc, char*argv[]){
         exit(1);
     }
 
-    write(desc_zrod,argv[2],strlen(argv[2]));
+    write(desc_zrod,argv[2],sizeof(argv[2])/sizeof(argv[2][0])-1);
 
     close(desc_zrod);
     return 0;

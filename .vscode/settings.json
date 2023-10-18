@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "unistd.h": "c"
-    }
+    },
+    "C_Cpp.default.compilerPath": "C:\\Program Files\\MinGW\\bin\\g++.exe"
 }
