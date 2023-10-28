@@ -31,7 +31,7 @@ void searchForChain(const char *chain, const char *filename) {
             start++;
 
             if (start == strlen(chain)) {
-                printf("Chain '%s' was found in file %s on line %d beginning at character %d\n", chain, filename, line, chainstart - strlen(chain)+1);
+                printf("Chain '%s' was found in file %s on line %d beginning at character %d\n", chain, filename, line, chainstart - strlen(chain));
                 start = 0;
                 correct = 1;
             }
