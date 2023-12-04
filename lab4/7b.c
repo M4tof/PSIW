@@ -1,33 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <signal.h>
-#include <fcntl.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/wait.h>
 
-#define MAX 200
+int main() {
+    int pipe1[2], pipe2[2];
+    pipe(pipe1);
+    pipe(pipe2);
 
-int main(int argc, char *argv[]){
-    int pdesk[2];
-    pipe(pdesk);
-    int adr = fork();
+    pid_t pid1, pid2;
 
-    if (adr!=0){ //w orginale        
-        close(pdesk[0]);
-        close(1);
-        dup(pdesk[1]);
-        execlp("ls","ls","-l",NULL);
-        close(pdesk[1]);
+    pid1 = fork();
+    if (pid1 == 0) { // Child process 1 - ls -l
+        close(pipe1[0]); // Close reading end of first pipe
 
+        dup2(pipe1[1], STDOUT_FILENO); // Redirect stdout to the writing end of first pipe
+        close(pipe1[1]); // Close writing end of first pipe
+
+        execlp("ls", "ls", "-l", NULL);
+
+    } 
+    else {
+        pid2 = fork();
+        
+        if (pid2 == 0) {// Child process 2 - grep ^t
+            
+            close(pipe1[1]); // Close writing end of first pipe
+            dup2(pipe1[0], STDIN_FILENO); // Redirect stdin to the reading end of first pipe
+            close(pipe1[0]); // Close reading end of first pipe
+
+            close(pipe2[0]); // Close reading end of second pipe
+
+            dup2(pipe2[1], STDOUT_FILENO); // Redirect stdout to the writing end of second pipe
+            close(pipe2[1]); // Close writing end of second pipe
+
+            execlp("grep", "grep", "^t", NULL);
+        } 
+        else {// Parent process
+            close(pipe1[0]); // Close unused ends of pipes
+            close(pipe1[1]);
+            close(pipe2[1]);
+
+            dup2(pipe2[0], STDIN_FILENO); // Redirect stdin to the reading end of second pipe
+            close(pipe2[0]); // Close reading end of second pipe
+
+            execlp("more", "more", NULL);
+        }
     }
 
-    else{ // potomny
-        close(pdesk[1]);
-        close(0);
-        dup(pdesk[0]);
-        execlp("grep","grep","^d",NULL);
-        close(pdesk[0]);
-    }
     return 0;
 }
