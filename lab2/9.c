@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
 
     if (adr1==0){
         setpgid(getpid(),pid);
-        sleep(15);
+        sleep(10);
         printf("2nd proces finished \n");
         exit(0);
 
